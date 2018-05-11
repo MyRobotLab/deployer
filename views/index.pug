@@ -20,7 +20,8 @@ block content
             td #{job.name}  <!-- #{job.latest.name} -->
 
               if job.latest.data != null
-                td #{job.latest.data['git.commit.time']}
+                td
+                   a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + job.latest.data['git.commit.id'])  #{job.latest.data['git.commit.time']}
                 td
                    a(href='/builds/' + job.latest.data['git.branch'] + '/' + job.name + '/' + job.latest.name) #{job.latest.name}
                 td
