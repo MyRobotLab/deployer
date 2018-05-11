@@ -9,6 +9,9 @@ block content
           th Status
           th Job
           th Latest
+          th Number
+          th User
+          th Comment
       tbody
         each job, i in displayJobs
           tr(class=(i % 2 == 0) ? 'odd' : 'even')
@@ -19,4 +22,8 @@ block content
               if job.latest.data != null
                 td #{job.latest.data['git.commit.time']}
                 td
-                   a(href='/' + job.name + '/' + job.latest.name) #{job.latest.name}
+                   a(href='/builds/' + job.latest.data['git.branch'] + '/' + job.name + '/' + job.latest.name) #{job.latest.name}
+                td
+                   a(href='http://github.com/' + job.latest.data['git.commit.user.name']) #{job.latest.data['git.commit.user.name']}
+                <!-- td #{JSON.stringify(job)} -->
+                td #{job.latest.data['git.commit.message.short']}
