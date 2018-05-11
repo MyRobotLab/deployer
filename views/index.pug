@@ -1,0 +1,22 @@
+extends layout
+block content
+
+  h1 Welcome to the #{title}
+  p
+    table.table.table-hover
+      thead
+        tr
+          th Status
+          th Job
+          th Latest
+      tbody
+        each job, i in displayJobs
+          tr(class=(i % 2 == 0) ? 'odd' : 'even')
+            td
+              img(src=("/images/blue.png"), width=20)
+            td #{job.name}  <!-- #{job.latest.name} -->
+
+              if job.latest.data != null
+                td #{job.latest.data['git.commit.time']}
+                td
+                   a(href='/' + job.name + '/' + job.latest.name) #{job.latest.name}
