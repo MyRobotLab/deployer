@@ -12,7 +12,7 @@ http://localhost:8888
 
 ## directory structure
 
->
+```
  |-- deployer
      |-- builds
          |-- origin/{branch}
@@ -20,10 +20,13 @@ http://localhost:8888
                  |-- {build number}
                       |-- classes
                            |-- git.properties
+                           
+```
 
 ## git.properties
 The file git.properties contains all the necessary data to identify and classify the build.
->
+
+```json
 {
   "git.branch" : "origin/develop",
   "git.build.host" : "work-e",
@@ -46,6 +49,6 @@ The file git.properties contains all the necessary data to identify and classify
   "git.remote.origin.url" : "https://github.com/MyRobotLab/myrobotlab.git",
   "git.tags" : ""
 }
-     
+```     
      
     
