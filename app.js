@@ -81,7 +81,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
                     newBuild['data'] = JSON.parse(data);
                     console.log(newBuild.data['git.branch']);
                     console.log(newBuild.data['git.commit.id']);
-
+ 
 
                     // console.log(newJob);
                 } catch(e) {
