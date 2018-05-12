@@ -1,3 +1,10 @@
+/*
+  FIXME - all meta data in publish location needs to be inside maven build (not jenkins) to do deployments
+  outside of jenkins - some of these vars could be collected from the machine .. {hostname}.x86.windows etc
+
+
+*/
+
 var createError = require('http-errors');
 var express = require('express');
 var serveIndex = require('serve-index')
@@ -7,6 +14,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var getJobsRouter = require('./routes/getJobs');
+var getBuildNumberRouter = require('./routes/getBuildNumber');
 
 const util = require('util');
 
@@ -37,6 +46,8 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
 */
   var basePath = "./builds/origin";
   var branchesFs = fs.readdirSync(basePath);
+  var scannedJobs = {};
+
   branchesFs.forEach(function(branch){
 //    console.log("  branch : " + branch);
     var jobPath = basePath + "/" + branch;
@@ -46,10 +57,10 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
 //        console.log("    job : " + job );
         var newJob = {};
         newJob.name = job;
-        jobs[job] = newJob;
+        scannedJobs[job] = newJob;
         newJob['builds'] = [];
         newJob['latest'] = "";
-        // jobs.push(job);
+        // scannedJobs.push(job);
         var builds = fs.readdirSync(buildPath);
         builds.forEach(function(build){
             var propertiesPath = buildPath + "/" + build + "/classes/git.properties";
@@ -69,6 +80,9 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
                 try {
                     newBuild['data'] = JSON.parse(data);
                     console.log(newBuild.data['git.branch']);
+                    console.log(newBuild.data['git.commit.id']);
+
+
                     // console.log(newJob);
                 } catch(e) {
                     // alert(e); // error in the above string (in this case, yes)!
@@ -87,7 +101,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
         })
     })
   });
-
+  jobs = scannedJobs;
 });
 
 // making it global (bad practice - but necessary for managing 2 threads)
@@ -109,6 +123,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/getJobs', getJobsRouter);
+app.use('/getBuildNumber', getBuildNumberRouter);
 app.use('/builds', express.static('builds'), serveIndex('builds', {'icons': true}))
 
 // catch 404 and forward to error handler
