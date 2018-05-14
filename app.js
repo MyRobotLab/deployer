@@ -14,6 +14,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var getDataRouter = require('./routes/getData');
 var getJobsRouter = require('./routes/getJobs');
 var getBuildNumberRouter = require('./routes/getBuildNumber');
 
@@ -32,76 +33,88 @@ var files = [];
 // making it global without "var"
 jobs = {};
 
-globalData = "GLOBAL DATA !";
+// global vars (without var)
+globalData = {};
+globalData.branches = {};
+globalData.jobs = jobs;
 
 buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
 //  console.log('scanning builds');
 
-/* works .... sort of ...
-  recursive("./builds/origin", function (err, files) {
-    // `files` is an array of file paths
-    console.log(files);
-  });
-  console.log(files);
-*/
   var basePath = "./builds/origin";
   var branchesFs = fs.readdirSync(basePath);
   var scannedJobs = {};
+  var scannedBuilds = [];
 
   branchesFs.forEach(function(branch){
-//    console.log("  branch : " + branch);
+
+//    console.log("branch : " + branch);
     var jobPath = basePath + "/" + branch;
     var jobsFs = fs.readdirSync(jobPath);
+
     jobsFs.forEach(function(job){
+      //  console.log("  job : " + job );
         var buildPath = jobPath + "/" + job;
-//        console.log("    job : " + job );
         var newJob = {};
         newJob.name = job;
-        scannedJobs[job] = newJob;
-        newJob['builds'] = [];
-        newJob['latest'] = "";
-        // scannedJobs.push(job);
-        var builds = fs.readdirSync(buildPath);
-        builds.forEach(function(build){
-            var propertiesPath = buildPath + "/" + build + "/classes/git.properties";
-//            console.log("      build : " + build );
-            var newBuild = {};
-            newBuild['name'] = build;
-            newBuild['json'] = "";
-            newBuild['data'] = null;
+        newJob.builds = [];
+        newJob.jobPath = jobPath;
 
+        scannedJobs[job] = newJob;
+
+        // build folders
+        var builds = fs.readdirSync(buildPath);
+        builds.forEach(function(buildFolderName){
+            // console.log("      buildFolderName : " + buildFolderName );
+            var propertiesPath = buildPath + "/" + buildFolderName + "/classes/git.properties";
+
+            var newBuild = {};
+            newBuild.name = buildFolderName;
+            newBuild.data = null;
+            newBuild.jobName = newJob.name;
+
+            // git.properties
             fs.readFile(propertiesPath, 'utf8', function (err, data) {
               if (err) {
                 // return console.log(err);
               } else {
                 // git properties
-                newBuild['json'] = data; // TODO - get rid of this (or display on expand)
+                // newBuild['json'] = data; // TODO - get rid of this (or display on expand)
 
                 try {
-                    newBuild['data'] = JSON.parse(data);
-                    console.log(newBuild.data['git.branch']);
-                    console.log(newBuild.data['git.commit.id']);
- 
+                    newBuild.data = JSON.parse(data);
+                    // globalData.branches[newBuild.data['git.branch']] = newBuild;
 
-                    // console.log(newJob);
+                    newBuild.key = branch + "/" + newBuild.data['git.commit.time'] + "/" + job + "/" + newBuild.name;
+
+                    // winner winner chicken dinner
+                    scannedBuilds.push(newBuild);
+                    // console.log(scannedBuilds);
                 } catch(e) {
                     // alert(e); // error in the above string (in this case, yes)!
+                    // no git.properties :(
                     console.log(e);
                 }
               }
-
             });
 
-            console.log(newBuild['json']);
-            console.log(util.inspect(newBuild['json'], false, null))
-            newJob['latest'] = newBuild;
-            newJob.builds.push(newBuild);
-            // console.log(newBuild['data']);
-            // var builds = fs.readdirSync(jobPath);
+            // newJob.builds.push(newBuild);
         })
     })
   });
-  jobs = scannedJobs;
+
+  //jobs = scannedJobs;
+  // globalData.jobs = scannedJobs;
+  // console.log(scannedBuilds);
+  /*
+  scannedBuilds.sort(function(a,b) {
+    console.log("key: " + a.key);
+    return a.key < b.key;
+  }); */
+  // console.log("key: ");
+  // compare({"name":"1"}, {"name":"2"});
+  globalData.builds = scannedBuilds;
+  console.log("here");
 });
 
 // making it global (bad practice - but necessary for managing 2 threads)
@@ -123,6 +136,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/getData', getDataRouter);
 app.use('/getJobs', getJobsRouter);
 app.use('/getBuildNumber', getBuildNumberRouter);
 app.use('/builds', express.static('builds'), serveIndex('builds', {'icons': true}))

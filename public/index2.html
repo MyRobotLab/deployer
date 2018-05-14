@@ -1,0 +1,27 @@
+<html>
+<head>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+</head>
+<body>
+
+  <div id="hacker-list">
+      <ul class="list"></ul>
+  </div>
+
+</body>
+
+<script>
+var options = {
+  valueNames: [ 'name', 'city' ],
+  item: '<li><h3 class="name"></h3><p class="city"></p></li>'
+};
+
+var values = [
+  { name: 'Jonny', city:'Stockholm' }
+  , { name: 'Jonas', city:'Berlin' }
+];
+
+var hackerList = new List('hacker-list', options, values);
+</script>
+
+</html>

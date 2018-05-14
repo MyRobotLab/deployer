@@ -14,7 +14,27 @@ router.get('/', function(req, res, next) {
   //   gitCommitTime=YYYY.
 
   res.contentType("text");
-  res.send('buildNumber=3\nbranch=' + req.param("branch"));
+
+  content = "";
+
+  var branch = req.param("branch");
+  if (branch != null){
+    content += "branch=" + branch + "\n";
+  }
+
+  var globalUsername = req.param("username");
+  if (globalUsername != null){
+    content += "global.username=" + globalUsername + "\n";
+  }
+
+  var globalPlatform = req.param("platform");
+  if (globalPlatform != null){
+    content += "global.platform=" + globalPlatform + "\n";
+  }
+
+  var globalBuildNumber = 5;
+
+  res.send("global.build.number=" + globalBuildNumber + "\n" + content);
 });
 
 module.exports = router;

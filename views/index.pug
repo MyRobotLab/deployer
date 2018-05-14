@@ -1,6 +1,5 @@
 extends layout
 block content
-
   h1 Welcome to the #{title}
   p
     table.table.table-hover
@@ -13,18 +12,17 @@ block content
           th User
           th Comment
       tbody
-        each job, i in displayJobs
+        each build, i in builds
           tr(class=(i % 2 == 0) ? 'odd' : 'even')
             td
               img(src=("/images/blue.png"), width=20)
-            td #{job.name}  <!-- #{job.latest.name} -->
+            td #{build.jobName}
 
-              if job.latest.data != null
                 td
-                   a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + job.latest.data['git.commit.id'])  #{job.latest.data['git.commit.time']}
+                   a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + build.data['git.commit.id'])  #{build.data['git.commit.time']}
                 td
-                   a(href='/builds/' + job.latest.data['git.branch'] + '/' + job.name + '/' + job.latest.name) #{job.latest.name}
+                   a(href='/builds/' + build.data['git.branch'] + '/' + build.name + '/' + build.name) #{build.name}
                 td
-                   a(href='http://github.com/' + job.latest.data['git.commit.user.name']) #{job.latest.data['git.commit.user.name']}
+                   a(href='http://github.com/' + build.data['git.commit.user.name']) #{build.data['git.commit.user.name']}
                 <!-- td #{JSON.stringify(job)} -->
-                td #{job.latest.data['git.commit.message.short']}
+                td #{build.data['git.commit.message.short']}
