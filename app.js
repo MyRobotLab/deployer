@@ -66,7 +66,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
         var builds = fs.readdirSync(buildPath);
         builds.forEach(function(buildFolderName){
             // console.log("      buildFolderName : " + buildFolderName );
-            var propertiesPath = buildPath + "/" + buildFolderName + "/classes/git.properties";
+            var propertiesPath = buildPath + "/" + buildFolderName + "/target/classes/git.properties";
 
             var newBuild = {};
             newBuild.name = buildFolderName;
@@ -103,16 +103,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
     })
   });
 
-  //jobs = scannedJobs;
-  // globalData.jobs = scannedJobs;
-  // console.log(scannedBuilds);
-  /*
-  scannedBuilds.sort(function(a,b) {
-    console.log("key: " + a.key);
-    return a.key < b.key;
-  }); */
-  // console.log("key: ");
-  // compare({"name":"1"}, {"name":"2"});
+  // this was painful - you can sort here - dunno why
   globalData.builds = scannedBuilds;
   console.log("here");
 });
