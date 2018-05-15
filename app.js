@@ -38,18 +38,27 @@ globalData = {};
 globalData.branches = {};
 globalData.jobs = jobs;
 
+var buildsOrigin = "./builds/origin"
+
+if (!fs.existsSync("./builds")){
+    fs.mkdirSync("./builds");
+}
+
+if (!fs.existsSync(buildsOrigin)){
+    fs.mkdirSync(buildsOrigin);
+}
+
 buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
 //  console.log('scanning builds');
 
-  var basePath = "./builds/origin";
-  var branchesFs = fs.readdirSync(basePath);
+  var branchesFs = fs.readdirSync(buildsOrigin);
   var scannedJobs = {};
   var scannedBuilds = [];
 
   branchesFs.forEach(function(branch){
 
 //    console.log("branch : " + branch);
-    var jobPath = basePath + "/" + branch;
+    var jobPath = buildsOrigin + "/" + branch;
     var jobsFs = fs.readdirSync(jobPath);
 
     jobsFs.forEach(function(job){
