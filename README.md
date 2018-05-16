@@ -8,7 +8,8 @@ It is meant to be running in a public place and allow a swarm of build servers b
 
 ## starting
 SET DEBUG=deployer:* & npm run devstart
-http://localhost:8888
+
+it should then be available @ http://localhost:8888
 
 ## directory structure
 
