@@ -32,9 +32,9 @@ router.get('/', function(req, res, next) {
     content += "global.platform=" + globalPlatform + "\n";
   }
 
-  var globalBuildNumber = 5;
+  // var globalBuildNumber = 5;
 
-  res.send("global.build.number=" + globalBuildNumber + "\n" + content);
+  res.send("global.build.number=" + globalData.latest[branch].number + "\n" + content);
 });
 
 module.exports = router;

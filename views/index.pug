@@ -9,6 +9,7 @@ block content
           th Job
           th Latest
           th Number
+          th Tests
           th User
           th Comment
       tbody
@@ -22,7 +23,8 @@ block content
                    a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + build.data['git.commit.id'])  #{build.data['git.commit.time']}
                 td
                    a(href='/builds/' + build.data['git.branch'] + '/' + build.jobName + '/' + build.name) #{build.name}
+                td #{build.tests.total} #{build.tests.errors}
+                <!-- td #{JSON.stringify(job)} -->
                 td
                    a(href='http://github.com/' + build.data['git.commit.user.name']) #{build.data['git.commit.user.name']}
-                <!-- td #{JSON.stringify(job)} -->
                 td #{build.data['git.commit.message.short']}

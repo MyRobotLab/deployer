@@ -11,6 +11,7 @@ var serveIndex = require('serve-index')
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var xml2js = require('xml2js');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -23,6 +24,8 @@ const util = require('util');
 var schedule = require('node-schedule');
 
 const fs = require('fs');
+
+const xmlParser = new xml2js.Parser();
 
 var branch = "";
 var job = "";
@@ -37,6 +40,7 @@ jobs = {};
 globalData = {};
 globalData.branches = {};
 globalData.jobs = jobs;
+globalData.latest = {};
 
 var buildsOrigin = "./builds/origin"
 
@@ -61,6 +65,19 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
     var jobPath = buildsOrigin + "/" + branch;
     var jobsFs = fs.readdirSync(jobPath);
 
+
+    if (globalData.latest[branch] == null){
+
+      globalData.latest[branch] = {};
+      globalData.latest[branch].number = 0;
+
+      console.log(branch + " " + globalData.latest[branch].number);
+      // globalData.latest.number = 0;
+      //  console.log('set');
+    }
+
+    // console.log(branch);
+
     jobsFs.forEach(function(job){
       //  console.log("  job : " + job );
         var buildPath = jobPath + "/" + job;
@@ -81,32 +98,46 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
             newBuild.name = buildFolderName;
             newBuild.data = null;
             newBuild.jobName = newJob.name;
+            newBuild.tests = {};
+            newBuild.tests.total = 0;
+            newBuild.tests.errors = 0;
+            newBuild.tests.skipped = 0;
+            newBuild.tests.failures = 0;
+            newBuild.tests.time = 0;
 
-            // git.properties
-            fs.readFile(propertiesPath, 'utf8', function (err, data) {
-              if (err) {
-                // return console.log(err);
-              } else {
-                // git properties
-                // newBuild['json'] = data; // TODO - get rid of this (or display on expand)
-
-                try {
-                    newBuild.data = JSON.parse(data);
-                    // globalData.branches[newBuild.data['git.branch']] = newBuild;
-
-                    newBuild.key = branch + "/" + newBuild.data['git.commit.time'] + "/" + job + "/" + newBuild.name;
-
-                    // winner winner chicken dinner
-                    scannedBuilds.push(newBuild);
-                    // console.log(scannedBuilds);
-                } catch(e) {
-                    // alert(e); // error in the above string (in this case, yes)!
-                    // no git.properties :(
-                    console.log(e);
-                }
+            try{
+              // git properties
+              newBuild.data = JSON.parse(fs.readFileSync(propertiesPath, 'utf8'));
+              newBuild.key = branch + "/" + newBuild.data['git.commit.time'] + "/" + job + "/" + newBuild.name;
+              // console.log(branch);
+              if (globalData.latest[branch].gitCommitTime == null ||
+                  globalData.latest[branch].gitCommitTime < newBuild.data['git.commit.time']){
+                globalData.latest[branch].gitCommitTime = newBuild.data['git.commit.time'];
+                globalData.latest[branch].number++;
               }
-            });
 
+              scannedBuilds.push(newBuild);
+
+              var surefireReportDir = buildPath + "/" + buildFolderName + "/target/surefire-reports";
+              fs.readdirSync(surefireReportDir).forEach(file => {
+                if(path.extname(file) === ".xml") {
+
+                  fs.readFile(surefireReportDir + '/' + file, function(err, data) {
+                      xmlParser.parseString(data, function (err, result) {
+                          // console.dir(result);
+                          // console.log(result.testsuite['$']);
+                          // console.log(result.testsuite['$'].tests);
+                          newBuild.tests.total += parseInt(result.testsuite['$'].tests, 10);;
+                          newBuild.tests.errors += parseInt(result.testsuite['$'].errors, 10);;
+                      });
+                  });
+                  //console.log(file);
+                }
+              })
+
+            } catch(e2){
+              //console.log(e2);
+            }
             // newJob.builds.push(newBuild);
         })
     })
@@ -114,7 +145,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
 
   // this was painful - you can sort here - dunno why
   globalData.builds = scannedBuilds;
-  console.log("here");
+  // console.log("here");
 });
 
 // making it global (bad practice - but necessary for managing 2 threads)
