@@ -120,8 +120,11 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
               // console.log(branch);
               if (globalData.latest[branch].gitCommitTime == null ||
                   globalData.latest[branch].gitCommitTime < newBuild.data['git.commit.time']){
+                    // found a new "latest"
                 globalData.latest[branch].gitCommitTime = newBuild.data['git.commit.time'];
                 globalData.latest[branch].number++;
+                globalData.latest[branch].jobName = newJob.name;
+                globalData.latest[branch].buildName = newBuild.name;
                 fs.writeFileSync("globalData.js", JSON.stringify(globalData));
               }
 
