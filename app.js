@@ -37,10 +37,18 @@ var files = [];
 jobs = {};
 
 // global vars (without var)
-globalData = {};
-globalData.branches = {};
-globalData.jobs = jobs;
-globalData.latest = {};
+globalData = null;
+
+try {
+  // file found - load it
+  globalData = JSON.parse(fs.readFileSync("globalData.js", 'utf8'));
+} catch(e){
+  // file not found - load blank globalData
+  globalData = {};
+  globalData.branches = {};
+  globalData.jobs = jobs;
+  globalData.latest = {};
+}
 
 var buildsOrigin = "./builds/origin"
 
@@ -114,6 +122,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
                   globalData.latest[branch].gitCommitTime < newBuild.data['git.commit.time']){
                 globalData.latest[branch].gitCommitTime = newBuild.data['git.commit.time'];
                 globalData.latest[branch].number++;
+                fs.writeFileSync("globalData.js", JSON.stringify(globalData));
               }
 
               scannedBuilds.push(newBuild);
