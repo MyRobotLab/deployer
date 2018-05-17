@@ -19,8 +19,8 @@ function compare(a,b) {
 router.get('/', function(req, res, next) {
 
   globalData.builds.sort(compare);
-
-  res.render('index', { title: 'Cookie Factory !', globalData:globalData, builds:globalData.builds });
+  // FIXME - just globalData :P - unless its filtering being applied
+  res.render('index', { title: 'Cookie Factory !', globalData:globalData, latest:globalData.latest.develop.build, builds:globalData.builds });
 
 });
 

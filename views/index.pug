@@ -6,13 +6,39 @@ block content
       thead
         tr
           th Status
-          th Job
+          th Swarm Publishing Winner
           th Latest
           th Number
           th Tests
           th User
           th Comment
       tbody
+        tr(class=(i % 2 == 0) ? 'odd' : 'even')
+          td
+            img(src=("/images/blue.png"), width=20)
+          td #{latest.jobName}
+
+              td
+                 a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + latest.data['git.commit.id'])  #{latest.data['git.commit.time']}
+              td
+                 a(href='/builds/' + latest.data['git.branch'] + '/' + latest.jobName + '/' + latest.name) #{latest.name}
+              td #{latest.tests.total} #{latest.tests.errors}
+              <!-- td #{JSON.stringify(job)} -->
+              td
+                 a(href='http://github.com/' + latest.data['git.commit.user.name']) #{latest.data['git.commit.user.name']}
+              td #{latest.data['git.commit.message.short']}
+
+      table.table.table-hover
+        thead
+          tr
+            th Status
+            th Swarm Job History
+            th Latest
+            th Number
+            th Tests
+            th User
+            th Comment
+        tbody
         each build, i in builds
           tr(class=(i % 2 == 0) ? 'odd' : 'even')
             td
