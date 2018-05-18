@@ -18,10 +18,11 @@ router.get('/', function(req, res, next) {
   content = "";
 
   var branch = req.param("branch");
-  if (branch != null){
-    content += "branch=" + branch + "\n";
+  if (branch == null){
+    branch = "develop";
   }
-
+  content += "branch=" + branch + "\n";
+  
   var globalUsername = req.param("username");
   if (globalUsername != null){
     content += "global.username=" + globalUsername + "\n";
