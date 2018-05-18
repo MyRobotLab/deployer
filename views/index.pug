@@ -13,20 +13,21 @@ block content
           th User
           th Comment
       tbody
-        tr(class=(i % 2 == 0) ? 'odd' : 'even')
-          td
-            img(src=("/images/blue.png"), width=20)
-          td #{latest.jobName}
+      tr(class=(i % 2 == 0) ? 'odd' : 'even')
+        td
+          img(src=("/images/blue.png"), width=20)
+        td #{latest.jobName}
 
-              td
-                 a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + latest.data['git.commit.id'])  #{latest.data['git.commit.time']}
-              td
-                 a(href='/builds/' + latest.data['git.branch'] + '/' + latest.jobName + '/' + latest.name) #{latest.name}
-              td #{latest.tests.total} #{latest.tests.errors}
-              <!-- td #{JSON.stringify(job)} -->
-              td
-                 a(href='http://github.com/' + latest.data['git.commit.user.name']) #{latest.data['git.commit.user.name']}
-              td #{latest.data['git.commit.message.short']}
+            td
+               a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + latest.data['git.commit.id'])  #{latest.data['git.commit.time']}
+            td
+               a(href='/builds/' + latest.data['git.branch'] + '/' + latest.jobName + '/' + latest.name) #{latest.name}
+            td
+                a(href='/builds/' + latest.data['git.branch'] + '/' + latest.jobName + '/' + latest.name + '/target/site/surefire-report.html') #{latest.tests.total} #{latest.tests.errors} #{latest.tests.failures} #{latest.tests.skipped}
+            td
+               a(href='http://github.com/' + latest.data['git.commit.user.name']) #{latest.data['git.commit.user.name']}
+            td #{latest.data['git.commit.message.short']}
+
 
       table.table.table-hover
         thead
@@ -49,8 +50,8 @@ block content
                    a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + build.data['git.commit.id'])  #{build.data['git.commit.time']}
                 td
                    a(href='/builds/' + build.data['git.branch'] + '/' + build.jobName + '/' + build.name) #{build.name}
-                td #{build.tests.total} #{build.tests.errors}
-                <!-- td #{JSON.stringify(job)} -->
+                td
+                    a(href='/builds/' + build.data['git.branch'] + '/' + build.jobName + '/' + build.name + '/target/site/surefire-report.html') #{build.tests.total} #{build.tests.errors} #{build.tests.failures} #{build.tests.skipped}
                 td
                    a(href='http://github.com/' + build.data['git.commit.user.name']) #{build.data['git.commit.user.name']}
                 td #{build.data['git.commit.message.short']}

@@ -108,7 +108,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
               return;
             }
 
-            console.log("      found new build at : " + buildFolderName );
+            console.log("      found new build at : " + buildKey );
             var newBuild = {};
             newBuild.key = buildKey;
             newBuild.name = buildFolderName;
@@ -117,8 +117,8 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
             newBuild.tests = {};
             newBuild.tests.total = 0;
             newBuild.tests.errors = 0;
-            newBuild.tests.skipped = 0;
             newBuild.tests.failures = 0;
+            newBuild.tests.skipped = 0;
             newBuild.tests.time = 0;
 
             try{
@@ -135,11 +135,10 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
 
                   fs.readFile(surefireReportDir + '/' + file, function(err, data) {
                       xmlParser.parseString(data, function (err, result) {
-                          // console.dir(result);
-                          // console.log(result.testsuite['$']);
-                          // console.log(result.testsuite['$'].tests);
-                          newBuild.tests.total += parseInt(result.testsuite['$'].tests, 10);;
-                          newBuild.tests.errors += parseInt(result.testsuite['$'].errors, 10);;
+                          newBuild.tests.total += parseInt(result.testsuite['$'].tests, 10);
+                          newBuild.tests.errors += parseInt(result.testsuite['$'].errors, 10);
+                          newBuild.tests.failures += parseInt(result.testsuite['$'].failures, 10);
+                          newBuild.tests.skipped += parseInt(result.testsuite['$'].skipped, 10);
                       });
                   });
                   //console.log(file);
