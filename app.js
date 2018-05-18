@@ -100,7 +100,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
         // build folders
         var builds = fs.readdirSync(buildPath);
         builds.forEach(function(buildFolderName){
-            // console.log("      buildFolderName : " + buildFolderName );
+            console.log("      buildFolderName : " + buildFolderName );
             var propertiesPath = buildPath + "/" + buildFolderName + "/target/classes/git.properties";
 
             var newBuild = {};
@@ -118,7 +118,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
               // git properties
               newBuild.data = JSON.parse(fs.readFileSync(propertiesPath, 'utf8'));
               newBuild.key = branch + "/" + newBuild.data['git.commit.time'] + "/" + job + "/" + newBuild.name;
-              // console.log(branch);
+              console.log(branch);
               if (globalData.latest[branch].gitCommitTime == null ||
                   globalData.latest[branch].gitCommitTime < newBuild.data['git.commit.time']){
 
