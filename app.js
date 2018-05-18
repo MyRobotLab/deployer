@@ -49,6 +49,7 @@ try {
   globalData.branches = {};
   globalData.jobs = jobs;
   globalData.latest = {};
+  globalData.builds = {};
 }
 
 var buildsOrigin = "./builds/origin"
@@ -66,7 +67,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
 
   var branchesFs = fs.readdirSync(buildsOrigin);
   var scannedJobs = {};
-  var scannedBuilds = [];
+  // var scannedBuilds = [];
 
   branchesFs.forEach(function(branch){
 
@@ -92,7 +93,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
         var buildPath = jobPath + "/" + job;
         var newJob = {};
         newJob.name = job;
-        newJob.builds = [];
+        newJob.builds = {};
         newJob.jobPath = jobPath;
 
         scannedJobs[job] = newJob;
@@ -100,10 +101,16 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
         // build folders
         var builds = fs.readdirSync(buildPath);
         builds.forEach(function(buildFolderName){
-            console.log("      buildFolderName : " + buildFolderName );
             var propertiesPath = buildPath + "/" + buildFolderName + "/target/classes/git.properties";
+            var buildKey = branch + "/" + job + "/" + buildFolderName;
 
+            if (buildKey in globalData.builds){
+              return;
+            }
+
+            console.log("      found new build at : " + buildFolderName );
             var newBuild = {};
+            newBuild.key = buildKey;
             newBuild.name = buildFolderName;
             newBuild.data = null;
             newBuild.jobName = newJob.name;
@@ -117,24 +124,11 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
             try{
               // git properties
               newBuild.data = JSON.parse(fs.readFileSync(propertiesPath, 'utf8'));
-              newBuild.key = branch + "/" + newBuild.data['git.commit.time'] + "/" + job + "/" + newBuild.name;
-              console.log(branch);
-              if (globalData.latest[branch].gitCommitTime == null ||
-                  globalData.latest[branch].gitCommitTime < newBuild.data['git.commit.time']){
 
-                // found a new "latest" - FIXME - redundant but getBuildNumber depends on it
-                globalData.latest[branch].gitCommitTime = newBuild.data['git.commit.time'];
-                globalData.latest[branch].number++;
-                globalData.latest[branch].jobName = newJob.name;
-                globalData.latest[branch].buildName = newBuild.name;
+              globalData.builds[newBuild.key] = newBuild;
+              newBuild.commitKey = newBuild.data['git.commit.time'];
 
-                // nice ! associate the "latest" (first committed build of a unique git commit time)
-                globalData.latest[branch].build = newBuild;
-                fs.writeFileSync("globalData.js", JSON.stringify(globalData));
-              }
-
-              scannedBuilds.push(newBuild);
-
+              // process test reports - update status
               var surefireReportDir = buildPath + "/" + buildFolderName + "/target/surefire-reports";
               fs.readdirSync(surefireReportDir).forEach(file => {
                 if(path.extname(file) === ".xml") {
@@ -152,6 +146,23 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
                 }
               })
 
+              // checking if "Latest" - which is first build of last commit
+              // console.log(branch);
+              // FIXME - use commitKey
+              if (globalData.latest[branch].gitCommitTime == null ||
+                  globalData.latest[branch].gitCommitTime < newBuild.data['git.commit.time']){
+
+                // found a new "latest" - FIXME - redundant but getBuildNumber depends on it
+                globalData.latest[branch].gitCommitTime = newBuild.data['git.commit.time'];
+                globalData.latest[branch].number++;
+                globalData.latest[branch].jobName = newJob.name;
+                globalData.latest[branch].buildName = newBuild.name;
+
+                // nice ! associate the "latest" (first committed build of a unique git commit time)
+                globalData.latest[branch].build = newBuild;
+                fs.writeFileSync("globalData.js", JSON.stringify(globalData));
+              }
+
             } catch(e2){
               //console.log(e2);
             }
@@ -161,7 +172,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
   });
 
   // this was painful - you can sort here - dunno why
-  globalData.builds = scannedBuilds;
+  // globalData.builds = scannedBuilds;
   // console.log("here");
 });
 

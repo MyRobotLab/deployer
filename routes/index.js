@@ -7,9 +7,9 @@ function compare(a,b) {
   // console.log("key: " + a.name);
   // return a.name < b.name;
   let comparison = 0;
-  if (a.key < b.key) {
+  if (a.commitKey < b.commitKey) {
     comparison = 1;
-  } else if (a.key > b.key) {
+  } else if (a.commitKey > b.commitKey) {
     comparison = -1;
   }
   return comparison;
@@ -18,9 +18,17 @@ function compare(a,b) {
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  globalData.builds.sort(compare);
+  var builds = [];
+
+  for (var key in globalData.builds) {
+    builds.push(globalData.builds[key]);
+    // console.log(obj[key]);
+  }
+
+  // globalData.builds.sort(compare);
+  builds.sort(compare);
   // FIXME - just globalData :P - unless its filtering being applied
-  res.render('index', { title: 'Cookie Factory !', globalData:globalData, latest:globalData.latest.develop.build, builds:globalData.builds });
+  res.render('index', { title: 'Cookie Factory !', globalData:globalData, latest:globalData.latest.develop.build, builds:builds });
 
 });
 
