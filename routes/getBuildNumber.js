@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
 
   // var globalBuildNumber = 5;
 
-  res.send("global.build.number=" + globalData.latest[branch].number + 1 + "\n" + content);
+  res.send("global.build.number=" + (globalData.latest[branch].number + 1) + "\n" + content);
 });
 
 module.exports = router;
