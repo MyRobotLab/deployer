@@ -139,6 +139,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
                           newBuild.tests.errors += parseInt(result.testsuite['$'].errors, 10);
                           newBuild.tests.failures += parseInt(result.testsuite['$'].failures, 10);
                           newBuild.tests.skipped += parseInt(result.testsuite['$'].skipped, 10);
+                          newBuild.tests.time += parseInt(result.testsuite['$'].time, 10);
                       });
                   });
                   //console.log(file);
