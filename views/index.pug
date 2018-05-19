@@ -1,7 +1,7 @@
 extends layout
 block content
   h1 Welcome to the #{title}
-  p
+  p   current build number - #{globalData.latest['develop'].number}
       table.table.table-hover
         thead
           tr

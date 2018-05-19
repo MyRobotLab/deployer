@@ -19,6 +19,7 @@ var getDataRouter = require('./routes/getData');
 var getJobsRouter = require('./routes/getJobs');
 var getLatest = require('./routes/getLatest');
 var getBuildNumberRouter = require('./routes/getBuildNumber');
+var setBuildNumberRouter = require('./routes/setBuildNumber');
 
 const util = require('util');
 
@@ -40,17 +41,16 @@ jobs = {};
 // global vars (without var)
 globalData = null;
 
-try {
-  // file found - load it
-  globalData = JSON.parse(fs.readFileSync("globalData.js", 'utf8'));
-} catch(e){
-  // file not found - load blank globalData
-  globalData = {};
-  globalData.branches = {};
-  globalData.jobs = jobs;
-  globalData.latest = {};
-  globalData.builds = {};
-}
+// FIXME - only load buildNumbers (after inital rescan of dirs)
+// file found - load it
+// globalData = JSON.parse(fs.readFileSync("globalData.js", 'utf8'));
+
+globalData = {};
+globalData.branches = {};
+globalData.jobs = jobs;
+globalData.latest = {};
+globalData.builds = {};
+
 
 var buildsOrigin = "./builds/origin"
 
@@ -199,6 +199,7 @@ app.use('/getData', getDataRouter);
 app.use('/getJobs', getJobsRouter);
 app.use('/getLatest', getLatest);
 app.use('/getBuildNumber', getBuildNumberRouter);
+app.use('/setBuildNumber', setBuildNumberRouter);
 app.use('/builds', express.static('builds'), serveIndex('builds', {'icons': true}))
 
 // catch 404 and forward to error handler

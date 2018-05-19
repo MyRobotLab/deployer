@@ -4,15 +4,6 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/', function(req, res, next) {
 
-  console.log()
-
-  // input must be branch !!!
-
-  // read file
-  // contents are :
-  //   buildNumber=x,
-  //   gitCommitTime=YYYY.
-
   res.contentType("text");
 
   content = "";
@@ -22,7 +13,7 @@ router.get('/', function(req, res, next) {
     branch = "develop";
   }
   content += "branch=" + branch + "\n";
-  
+
   var globalUsername = req.param("username");
   if (globalUsername != null){
     content += "global.username=" + globalUsername + "\n";
