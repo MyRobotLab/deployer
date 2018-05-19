@@ -10,6 +10,7 @@ block content
             th Latest
             th Number
             th Tests
+            th Time
             th User
             th Comment
         tbody
@@ -30,6 +31,7 @@ block content
                     else
                       a(href=reportUrl) #[img(src='images/icon_success_sml.gif',  alt="tests")]
                     // #{build.tests.total} #{build.tests.errors} #{build.tests.failures} #{build.tests.skipped}
+                td #{build.tests.time}
                 td
                    a(href='http://github.com/' + build.data['git.commit.user.name']) #{build.data['git.commit.user.name']}
                 td #{build.data['git.commit.message.short']}
