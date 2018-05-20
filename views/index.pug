@@ -1,7 +1,8 @@
 extends layout
 block content
   h1 Welcome to the #{title}
-  p   current build number - #{globalData.latest['develop'].number}
+  p   perma-link #[a(href='http://build.myrobotlab.org:8888/getLatest') http://build.myrobotlab.org:8888/getLatest]
+  p   build number - #{globalData.latest['develop'].number} #{globalData.latest['develop'].build.key}
       table.table.table-hover
         thead
           tr

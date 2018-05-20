@@ -1,8 +1,6 @@
 /*
   FIXME - all meta data in publish location needs to be inside maven build (not jenkins) to do deployments
   outside of jenkins - some of these vars could be collected from the machine .. {hostname}.x86.windows etc
-
-
 */
 
 var createError = require('http-errors');
@@ -15,7 +13,6 @@ var logger = require('morgan');
 var xml2js = require('xml2js');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var getDataRouter = require('./routes/getData');
 var getJobsRouter = require('./routes/getJobs');
 var getLatest = require('./routes/getLatest');
@@ -34,24 +31,18 @@ var branch = "";
 var job = "";
 var build = "";
 
-var files = [];
-
-// making it global without "var"
-jobs = {};
-
 // global vars (without var)
 globalData = null;
 
-// FIXME - only load buildNumbers (after inital rescan of dirs)
-// file found - load it
-// globalData = JSON.parse(fs.readFileSync("globalData.js", 'utf8'));
-
-globalData = {};
-globalData.branches = {};
-globalData.jobs = jobs;
-globalData.latest = {};
-globalData.builds = {};
-
+try {
+  // file found - load it
+  globalData = JSON.parse(fs.readFileSync("globalData.json", 'utf8'));
+} catch(e){
+  // file not found - load blank globalData
+  globalData = {};
+  globalData.latest = {};
+  globalData.builds = {};
+}
 
 var buildsOrigin = "./builds/origin"
 
@@ -73,19 +64,16 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
   branchesFs.forEach(function(branch){
 
 //    console.log("branch : " + branch);
-    var jobPath = buildsOrigin + "/" + branch;
-    var jobsFs = fs.readdirSync(jobPath);
+
+  var jobPath = buildsOrigin + "/" + branch;
+  var jobsFs = fs.readdirSync(jobPath);
 
 
-    if (globalData.latest[branch] == null){
-
-      globalData.latest[branch] = {};
-      globalData.latest[branch].number = 0;
-
-      console.log(branch + " " + globalData.latest[branch].number);
-      // globalData.latest.number = 0;
-      //  console.log('set');
-    }
+  if (globalData.latest[branch] == null){
+    globalData.latest[branch] = {};
+    globalData.latest[branch].number = 0;
+    console.log(branch + " " + globalData.latest[branch].number);
+  }
 
     // console.log(branch);
 
@@ -122,7 +110,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
             newBuild.tests.skipped = 0;
             newBuild.tests.time = 0;
 
-            try{
+            try {
               // git properties
               newBuild.data = JSON.parse(fs.readFileSync(propertiesPath, 'utf8'));
 
@@ -161,7 +149,7 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
 
                 // nice ! associate the "latest" (first committed build of a unique git commit time)
                 globalData.latest[branch].build = newBuild;
-                fs.writeFileSync("globalData.js", JSON.stringify(globalData));
+                fs.writeFileSync("globalData.json", JSON.stringify(globalData));
               }
 
             } catch(e2){
@@ -195,7 +183,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/getData', getDataRouter);
 app.use('/getJobs', getJobsRouter);
 app.use('/getLatest', getLatest);
