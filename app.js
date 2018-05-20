@@ -7,7 +7,8 @@
 
 var createError = require('http-errors');
 var express = require('express');
-var serveIndex = require('serve-index')
+var serveIndex = require('serve-index');
+var favicon = require('serve-favicon');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -200,7 +201,9 @@ app.use('/getJobs', getJobsRouter);
 app.use('/getLatest', getLatest);
 app.use('/getBuildNumber', getBuildNumberRouter);
 app.use('/setBuildNumber', setBuildNumberRouter);
-app.use('/builds', express.static('builds'), serveIndex('builds', {'icons': true}))
+app.use('/builds', express.static('builds'), serveIndex('builds', {'icons': true}));
+
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

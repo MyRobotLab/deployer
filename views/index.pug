@@ -9,7 +9,6 @@ block content
             th Swarm Job History
             th Latest
             th Number
-            th Tests
             th Time
             th User
             th Comment
@@ -17,21 +16,19 @@ block content
         each build, i in builds
           tr(class=(i % 2 == 0) ? 'odd' : 'even')
             td
-              img(src=("/images/blue.png"), width=20)
+                - var reportUrl = '/builds/' + build.data['git.branch'] + '/' + build.jobName + '/' + build.name + '/target/site/surefire-report.html';
+                if build.tests.errors > 0
+                  a(href=reportUrl) #[img(src='images/icon_error_sml.gif',  alt="errors")]
+                else
+                  a(href=reportUrl) #[img(src='images/icon_success_sml.gif',  alt="tests")]
+                // #{build.tests.total} #{build.tests.errors} #{build.tests.failures} #{build.tests.skipped}
             td #{build.jobName}
 
-                td
-                   a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + build.data['git.commit.id'])  #{build.data['git.commit.time']}
-                td
-                   a(href='/builds/' + build.data['git.branch'] + '/' + build.jobName + '/' + build.name) #{build.name}
-                td
-                    - var reportUrl = '/builds/' + build.data['git.branch'] + '/' + build.jobName + '/' + build.name + '/target/site/surefire-report.html';
-                    if build.tests.errors > 0
-                      a(href=reportUrl) #[img(src='images/icon_error_sml.gif',  alt="errors")]
-                    else
-                      a(href=reportUrl) #[img(src='images/icon_success_sml.gif',  alt="tests")]
-                    // #{build.tests.total} #{build.tests.errors} #{build.tests.failures} #{build.tests.skipped}
-                td #{build.tests.time}
-                td
-                   a(href='http://github.com/' + build.data['git.commit.user.name']) #{build.data['git.commit.user.name']}
-                td #{build.data['git.commit.message.short']}
+            td
+               a(href='https://github.com/MyRobotLab/myrobotlab/commit/' + build.data['git.commit.id'])  #{build.data['git.commit.time']}
+            td
+               a(href='/builds/' + build.data['git.branch'] + '/' + build.jobName + '/' + build.name) #{build.name}
+            td #{build.tests.time}
+            td
+               a(href='http://github.com/' + build.data['git.commit.user.name']) #{build.data['git.commit.user.name']}
+            td #{build.data['git.commit.message.short']}
