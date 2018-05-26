@@ -13,12 +13,13 @@ var logger = require('morgan');
 var xml2js = require('xml2js');
 
 var indexRouter = require('./routes/index');
-var getDataRouter = require('./routes/getData');
-var getJobsRouter = require('./routes/getJobs');
+var getData = require('./routes/getData');
+var getJobs = require('./routes/getJobs');
 var getLatest = require('./routes/getLatest');
 var getLatestStatus = require('./routes/getLatestStatus');
-var getBuildNumberRouter = require('./routes/getBuildNumber');
-var setBuildNumberRouter = require('./routes/setBuildNumber');
+var getLatestReport = require('./routes/getLatestReport');
+var getBuildNumber = require('./routes/getBuildNumber');
+var setBuildNumber = require('./routes/setBuildNumber');
 
 const util = require('util');
 
@@ -184,12 +185,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/getData', getDataRouter);
-app.use('/getJobs', getJobsRouter);
+app.use('/getData', getData);
+app.use('/getJobs', getJobs);
 app.use('/getLatest', getLatest);
 app.use('/getLatestStatus', getLatestStatus);
-app.use('/getBuildNumber', getBuildNumberRouter);
-app.use('/setBuildNumber', setBuildNumberRouter);
+app.use('/getLatestReport', getLatestReport);
+app.use('/getBuildNumber', getBuildNumber);
+app.use('/setBuildNumber', setBuildNumber);
 app.use('/builds', express.static('builds'), serveIndex('builds', {'icons': true}));
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
   if (branch == null){
     branch = "develop";
   }
-  var url = "/builds/origin/" + branch + "/" + globalData.latest[branch].jobName + "/" + globalData.latest[branch].build.name + "/target/myrobotlab.jar";
+  var url = "/builds/origin/" + branch + "/" + globalData.latest[branch].jobName + "/" + globalData.latest[branch].build.name + "/target/site/surefire-report.html";
   console.log(url);
   // http://build.myrobotlab.org:8888/builds/origin/develop/myrobotlab-grog-x86.64.linux-work-e/79/target/
   res.redirect(url);
