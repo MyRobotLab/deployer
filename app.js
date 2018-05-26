@@ -16,6 +16,7 @@ var indexRouter = require('./routes/index');
 var getDataRouter = require('./routes/getData');
 var getJobsRouter = require('./routes/getJobs');
 var getLatest = require('./routes/getLatest');
+var getLatestStatus = require('./routes/getLatestStatus');
 var getBuildNumberRouter = require('./routes/getBuildNumber');
 var setBuildNumberRouter = require('./routes/setBuildNumber');
 
@@ -186,6 +187,7 @@ app.use('/', indexRouter);
 app.use('/getData', getDataRouter);
 app.use('/getJobs', getJobsRouter);
 app.use('/getLatest', getLatest);
+app.use('/getLatestStatus', getLatestStatus);
 app.use('/getBuildNumber', getBuildNumberRouter);
 app.use('/setBuildNumber', setBuildNumberRouter);
 app.use('/builds', express.static('builds'), serveIndex('builds', {'icons': true}));
