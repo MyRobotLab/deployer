@@ -8,14 +8,18 @@ router.get('/', function(req, res, next) {
   var branch = req.param("branch");
   if (branch == null){
     branch = "develop";
-  } 
+  }
 
   var status = "error";
   if (globalData.latest[branch].build.tests.errors == 0){
     status = "success";
   }
 
-  res.send("http://build.myrobotlab.org:8888/images/icon_"+status+"_sml.gif");
+  var url = "http://build.myrobotlab.org:8888/images/icon_"+status+"_sml.gif";
+
+  // res.send("http://build.myrobotlab.org:8888/images/icon_"+status+"_sml.gif");
+  res.redirect(url);
+
 });
 
 module.exports = router;
