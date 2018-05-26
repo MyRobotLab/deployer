@@ -137,6 +137,12 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
                 }
               })
 
+            } catch(e2){
+              newBuild.tests.errors = 1;
+              console.log("cannont process surefire reports");
+              // console.log(e2);
+            }
+
               // checking if "Latest" - which is first build of last commit
               // console.log(branch);
               // FIXME - use commitKey
@@ -154,9 +160,6 @@ buildScanner = schedule.scheduleJob('*/1 * * * * *', function(){
                 fs.writeFileSync("globalData.json", JSON.stringify(globalData));
               }
 
-            } catch(e2){
-              //console.log(e2);
-            }
             // newJob.builds.push(newBuild);
         })
     })
