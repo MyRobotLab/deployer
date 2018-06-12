@@ -19,6 +19,7 @@ var getLatest = require('./routes/getLatest');
 var getLatestStatus = require('./routes/getLatestStatus');
 var getLatestReport = require('./routes/getLatestReport');
 var getBuildNumber = require('./routes/getBuildNumber');
+var setIpAddress = require('./routes/setIpAddress');
 var setBuildNumber = require('./routes/setBuildNumber');
 
 const util = require('util');
@@ -194,6 +195,7 @@ app.use('/getLatest', getLatest);
 app.use('/getLatestStatus', getLatestStatus);
 app.use('/getLatestReport', getLatestReport);
 app.use('/getBuildNumber', getBuildNumber);
+app.use('/setIpAddress', setIpAddress);
 app.use('/setBuildNumber', setBuildNumber);
 app.use('/builds', express.static('builds'), serveIndex('builds', {'icons': true}));
 
