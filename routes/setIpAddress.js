@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 
   // set and save
   if (ipaddress != null){
-    globalData.ipaddress = parseInt(ipaddress, 10);
+    globalData.ipaddress = ipaddress;
     fs.writeFileSync("globalData.json", JSON.stringify(globalData));
   }
 
